@@ -2,6 +2,9 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/fireba
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-analytics.js";
 
+
+
+let userData=[]
   // Your web app's Firebase configuration
   const firebaseConfig = {
     apiKey: "AIzaSyCauitOiKDUc0iI0rYZrl5fcJ_Wnth_Zp4",
@@ -27,11 +30,13 @@ import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.2/firebas
       const userSnapshot = await getDocs(usersCollection); // Fetch all documents in the collection
       const userList = userSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); // Map documents to an array of objects
 
-      console.log(userList); // Logs an array of user objects with their data
+      userData=[...userList]
+      console.log(userData)
     } catch (error) {
       console.error("Error fetching user data: ", error);
     }
   }
+
 
   // Call the function to fetch users
   fetchUsers();
