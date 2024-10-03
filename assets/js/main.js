@@ -64,7 +64,7 @@
    * Scrolls to an element with header offset
    */
   const scrollto = (el) => {
-    let header = select("#header");
+    let header = select("#header-container");
     let offset = header.offsetHeight;
 
     let elementPos = select(el).offsetTop;
@@ -77,7 +77,7 @@
   /**
    * Toggle .header-scrolled class to #header when page is scrolled
    */
-  let selectHeader = select("#header");
+  let selectHeader = select("#header-container");
   if (selectHeader) {
     const headerScrolled = () => {
       if (window.scrollY > 100) {
@@ -456,7 +456,7 @@
     }
   });
 
-  document.getElementById("currentYear").textContent = new Date().getFullYear();
+ 
 
 
 
