@@ -57,7 +57,13 @@ let establishment;
           document.getElementById("point6").innerHTML+=establishment.point6
           document.getElementById("point7").innerHTML+=establishment.point7
           document.getElementById("point8").innerHTML+=establishment.point8
+          document.getElementById("point9").innerHTML+=establishment.point9
+          document.getElementById("point10").innerHTML+=establishment.point10
+          document.getElementById("point11").innerHTML+=establishment.point11
+          document.getElementById("point12").innerHTML+=establishment.point12;
+          document.getElementById("point13").innerHTML+=establishment.point13;
         } catch (error) {
+            
           console.error("Error fetching user data: ", error);
         }
       }
