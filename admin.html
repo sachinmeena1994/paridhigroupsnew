@@ -1,15 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin</title>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Paridhi Group</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Optional: Custom CSS -->
+    <link href="assets/css/style.css" rel="stylesheet" />
+    <style>
+      /* Custom Styles */
+      body {
+        background-color: #f8f9fa;
+      }
+      .hidden {
+        display: none;
+      }
+      .container {
+        max-width: 500px;
+        margin-top: 100px;
+        background: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .upload-section {
+        margin-top: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="parentContainer">
+      <!-- Container -->
+      <div class="container">
+        <!-- Login Section -->
+        <div id="loginSection">
+          <h2 class="text-center mb-4">Admin Login</h2>
+          <form id="adminLoginForm">
+            <div class="mb-3">
+              <label for="adminEmail" class="form-label">Email address</label>
+              <input
+                type="email"
+                class="form-control"
+                id="adminEmail"
+                name="email"
+                placeholder="Enter email"
+                required
+              />
+            </div>
+            <div class="mb-4">
+              <label for="adminPassword" class="form-label">Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="adminPassword"
+                name="password"
+                placeholder="Password"
+                required
+              />
+            </div>
+            <button type="submit" id="loginbtn" class="btn btn-primary w-100">
+              Login
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- Dashboard Section (Initially Hidden) -->
 
+    <div id="dashboardSection" style = "display:none">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Admin Dashboard</h2>
+        <button id="logoutBtn" class="btn btn-danger">Logout</button>
+      </div>
+      <div class="d-grid gap-3">
+        <button id="uploadPropertyBtn" class="btn btn-success">
+          Upload Property
+        </button>
+        <button id="uploadTeamImageBtn" class="btn btn-success">
+          Upload Team Image
+        </button>
+      </div>
 
+      <!-- Upload Property Form (Hidden Initially) -->
+      <div id="uploadPropertySection" class="upload-section hidden">
+        <h4 class="mt-5 mb-3">Upload Property</h4>
+        <form id="propertyUploadForm">
+          <div class="mb-3">
+            <label for="propertyTitle" class="form-label">Property Title</label>
+            <input
+              type="text"
+              class="form-control"
+              id="propertyTitle"
+              name="title"
+              placeholder="Enter property title"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="propertyDescription" class="form-label"
+              >Description</label
+            >
+            <textarea
+              class="form-control"
+              id="propertyDescription"
+              name="description"
+              rows="3"
+              placeholder="Enter property description"
+              required
+            ></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="propertyImage" class="form-label">Property Image</label>
+            <input
+              type="file"
+              class="form-control"
+              id="propertyImage"
+              name="image"
+              accept="image/*"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-success">Upload Property</button>
+        </form>
+      </div>
 
+      <!-- Upload Team Image Form (Hidden Initially) -->
+      <div id="uploadTeamImageSection" class="upload-section hidden">
+        <h4 class="mt-5 mb-3">Upload Team Image</h4>
+        <form id="teamImageUploadForm">
+          <div class="mb-3">
+            <label for="teamMemberName" class="form-label"
+              >Team Member Name</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="teamMemberName"
+              name="name"
+              placeholder="Enter team member name"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="teamMemberRole" class="form-label">Role</label>
+            <input
+              type="text"
+              class="form-control"
+              id="teamMemberRole"
+              name="role"
+              placeholder="Enter role"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="teamMemberImage" class="form-label"
+              >Team Member Image</label
+            >
+            <input
+              type="file"
+              class="form-control"
+              id="teamMemberImage"
+              name="image"
+              accept="image/*"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-success">
+            Upload Team Image
+          </button>
+        </form>
+      </div>
+    </div>
 
-    <script type="module" src="assets/js/firebase.js"></script>
-</body>
+    <!-- Bootstrap JS and Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Firebase and Other Scripts -->
+    <!-- <script type="module" src="assets/js/firebase.js"></script> -->
+    <script type="module" src="assets/js/admin.js"></script>
+
+    <!-- Custom Admin JS -->
+  </body>
 </html>

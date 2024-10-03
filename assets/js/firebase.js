@@ -19,26 +19,34 @@ let establishment;
 
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
+  // const storageRef = firebase.storage().ref();
+
   const analytics = getAnalytics(app);
 
   // Initialize Firestore
   const db = getFirestore(app);
-
+  
   // Function to fetch users from the 'users' collection
   async function fetchUsers() {
     try {
       const usersCollection = collection(db, 'user'); // Get a reference to the 'users' collection
       const userSnapshot = await getDocs(usersCollection); // Fetch all documents in the collection
       const userList = userSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); // Map documents to an array of objects
-
       userData=[...userList]
-      console.log(userData)
+      localStorage.setItem("UserData", userData)
     } catch (error) {
       console.error("Error fetching user data: ", error);
     }
   }
 
 
+
+// document.getElementById("uploadPropertyBtn").addEventListener("click",() => {
+//   const TitleProperty = document.getElementById("propertyTitle").value
+//   const DescriptionProperty = document.getElementById("propertyDescription").value
+//   console.log(TitleProperty,DescriptionProperty)
+  
+// })
     // Function to fetch users from the 'information' collection
     async function fetchUEstablishment() {
         try {
