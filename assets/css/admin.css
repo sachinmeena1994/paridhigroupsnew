@@ -1,0 +1,305 @@
+/* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
+}
+
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+}
+
+/* Side Menu */
+.side-menu {
+  width: 200px;
+  background-color: #343a40;
+  color: white;
+  padding: 20px;
+}
+
+.side-menu ul {
+  list-style: none;
+  padding: 0;
+}
+
+.side-menu ul li {
+  margin-bottom: 10px;
+}
+
+.side-menu ul li button {
+  width: 100%;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+  cursor: pointer;
+  text-align: left;
+}
+
+.side-menu ul li button:hover {
+  background-color: #0056b3;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 20px;
+  background-color: #fff;
+  overflow-y: auto;
+}
+
+.content-section {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+}
+
+/* Buttons */
+.btn {
+  padding: 10px 15px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.btn-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.custom-btn {
+  background-color: #28a745;
+  color: #fff;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  transition: background-color 0.3s;
+  margin-right: 10px;
+}
+
+.custom-btn:hover {
+  background-color: #218838;
+}
+
+/* Form Styles */
+.form-control {
+  padding: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  width: 100%;
+  margin-bottom: 15px;
+  transition: border-color 0.3s;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.form-label {
+  font-weight: 600;
+}
+
+/* Headings */
+h4, h2 {
+  color: #343a40;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 20px;
+  font-family: 'Poppins', sans-serif;
+}
+
+h4 {
+  font-size: 1.5rem;
+  color: #007bff;
+  border-bottom: 2px solid #007bff;
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+/* Property Cards */
+.property-card {
+  background-color: #ffffff;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.property-card:hover {
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.property-card-header {
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.property-card-header:hover {
+  background-color: #0056b3;
+}
+
+.property-card-body {
+  padding: 15px;
+  display: none;
+  color: #555;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* Toggle Open Property Card */
+.property-card.open .property-card-body {
+  display: block;
+}
+
+#propertyList img {
+  max-width: 100%;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+/* Hidden Elements */
+.hidden {
+  display: none;
+}
+
+/* Responsive Layout */
+@media (max-width: 768px) {
+  .side-menu {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+  }
+
+  .side-menu ul {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .content-section {
+    width: 100%;
+    padding: 10px;
+  }
+}
+
+
+/* Section Header with Heading and Button */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-header h4 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #007bff;
+  font-weight: bold;
+}
+
+.section-subheader {
+  text-align: center;
+  color: #007bff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 5px;
+  display: inline-block;
+  margin-top: 40px;
+}
+
+/* Form and Button Alignment */
+#propertyForm {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-top: 20px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-footer {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Centering the Add Property Button */
+.custom-btn {
+  display: inline-block;
+  margin-left: auto; /* Aligns the button to the right within the flex container */
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+/* Form Label and Input Styling */
+.form-label {
+  font-weight: 600;
+  color: #495057;
+}
+
+.form-control {
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+  transition: border-color 0.3s;
+}
+
+.form-control:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Property List Card Styling */
+.property-card {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  transition: all 0.3s ease-in-out;
+}
+
+.property-card:hover {
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
