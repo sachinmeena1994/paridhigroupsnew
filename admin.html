@@ -246,5 +246,32 @@
     <script type="module" src="assets/js/admin.js"></script>
 
     <!-- Custom Admin JS -->
+     <!-- Service Details Modal -->
+<div id="serviceModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5);">
+  <div style="background: #fff; padding: 20px; max-width: 500px; margin: 50px auto; border-radius: 8px;">
+    <h5>Edit Service Details</h5>
+    <form id="serviceForm">
+      <div class="mb-3">
+        <label for="serviceContact" class="form-label">Contact</label>
+        <input type="text" id="serviceContact" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="serviceLocation" class="form-label">Location</label>
+        <input type="text" id="serviceLocation" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="servicePropertyName" class="form-label">Property Name</label>
+        <input type="text" id="servicePropertyName" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="serviceImages" class="form-label">Upload Images</label>
+        <input type="file" id="serviceImages" class="form-control" multiple>
+      </div>
+      <button type="submit" class="btn btn-primary" id="saveServiceDetailsForm">Save</button>
+      <button type="button" class="btn btn-secondary" onclick="document.getElementById('serviceModal').style.display='none'">Cancel</button>
+    </form>
+  </div>
+</div>
+
   </body>
 </html>
