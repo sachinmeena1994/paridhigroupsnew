@@ -610,7 +610,7 @@ async function displayMemberDetails(userListData) {
           <h4>${member.name}</h4>
           <span>${member.role || member.position || 'No Role Specified'}</span>
           <div class="button-container mt-2">
-            <button class="btn btn-primary btn-sm me-2" onclick="editTeamMember('${index}', '${member.name}', '${member.role || member.position}', '${member.imageUrl || ''}')">Edit</button>
+            <button class="btn btn-primary btn-sm me-2" onclick="editTeamMember('${member.id}', '${member.name}', '${member.role || member.position}', '${member.imageUrl || ''}')">Edit</button>
             <button class="btn btn-danger btn-sm" onclick="deleteTeamMember('${member}')">Delete</button>
           </div>
         </div>
