@@ -31,6 +31,7 @@
     <style>
       #header-container {
         background: rgba(0, 0, 0, 0.8);
+        
     }
     
     </style>
@@ -67,8 +68,9 @@
               class="form-control"
               id="adminPassword"
               name="password"
-              placeholder="Password"
+              placeholder="Enter Password"
               required
+            
             />
           </div>
           <button type="submit" id="loginbtn" class="btn btn-primary w-100">
@@ -80,7 +82,8 @@
   
   </div>
 
-  <div class="dashboard-container">
+  <!-- style="visibility:hidden" -->
+  <div class="dashboard-container" id ="dashboardSection" >
     <!-- Side Menu -->
     <div class="side-menu">
       <ul>
@@ -182,13 +185,16 @@
       
   
         <!-- Manage Team Section (Hidden Initially) -->
-        <div id="manageTeamSection" class="content-section hidden">
+        <div id="manageTeamSection" class="content-section ">
        <!-- Button to toggle the team form -->
-<button id="toggleTeamFormBtn" class="btn btn-primary mt-4">Add Team Member</button>
+<div style="display: flex;">
+  <button id="toggleTeamFormBtn" class="btn btn-primary mt-4">Add Team Member</button>
+<button id="closeForm" class="btn btn-primary mt-4" style="display: none;">Close</button>
+</div>
 
 <!-- Collapsible Team Form -->
-<div id="manageTeamSection" class="content-section " style="display: none;">
-  <h4 class="mt-5 mb-3">Upload Team Image</h4>
+<div id="manageTeamSectionForm" class="content-section " style="display: none;">
+  <h4 class="mt-5 mb-3">Add Team</h4>
   <form id="teamImageUploadForm">
     <div class="mb-3">
       <label for="teamMemberName" class="form-label">Team Member Name</label>
@@ -223,14 +229,17 @@
         required
       />
     </div>
-    <button type="submit" class="btn btn-success">Upload Team Image</button>
+    <button type="submit" class="btn btn-success">Add Team</button>
   </form>
 </div>
 
 <!-- Display Current Team Members -->
 <div id="currentTeam" class="mt-5">
   <h4>Our Team</h4>
-  <div class="row" id="teamContainer"></div>
+  <div class="row" id="teamContainer">
+
+    <!-- dynamic data -->
+  </div>
 </div>
 
         </div>

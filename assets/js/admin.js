@@ -1,4 +1,6 @@
-import { collection, getDocs,getDoc ,addDoc,setDoc,doc,deleteDoc} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+import { collection, getDocs,getDoc ,addDoc,setDoc,doc,deleteDoc,query,limit,arrayUnion,updateDoc,
+  arrayRemove
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 import {db,storage} from './firebase.js'
 import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-storage.js";
 
@@ -6,12 +8,12 @@ let userData=[]
 let userListData
 async function fetchUsers() {
   try {
-    const usersCollection = collection(db, 'user'); // Get a reference to the 'users' collection
-    const userSnapshot = await getDocs(usersCollection); // Fetch all documents in the collection
-    const userList = userSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); // Map documents to an array of objects
+    const usersCollection = collection(db, 'user'); 
+    const userSnapshot = await getDocs(usersCollection); 
+    const userList = userSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); 
     userData = [...userList]
     userListData=[...userList[0].teams]
-    fetchTeamMembers(userListData); 
+    displayMemberDetails(userListData); 
   } catch (error) {
     console.error("Error fetching user data: ", error);
   }
@@ -20,14 +22,15 @@ async function fetchUsers() {
 
 fetchUsers();
 
-document.getElementById("loginbtn").addEventListener("click", (event) => {
+document.getElementById("adminLoginForm").addEventListener("submit", (event) => {
   event.preventDefault();  // Prevent the form submission and page reload
   const emailId = document.getElementById("adminEmail").value;
   const PasswordId = document.getElementById("adminPassword").value;
   
   if (userData[0].email == emailId && userData[0].password == PasswordId) {
     document.getElementById("parentContainer").style.display = "none";
-    document.getElementById("dashboardSection").style.display = "block";
+    document.getElementById("dashboardSection").style.visibility = "visible"; 
+    
   }
 });
 
@@ -522,6 +525,7 @@ document.getElementById("saveServiceDetailsForm").addEventListener("click", func
 
 
 
+// Event listener for the team image upload form
 document.getElementById("teamImageUploadForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -529,26 +533,56 @@ document.getElementById("teamImageUploadForm").addEventListener("submit", async 
   const role = document.getElementById("teamMemberRole").value;
   const imageFile = document.getElementById("teamMemberImage").files[0];
 
+  // Validate input
+  if (!name || !role) {
+    alert("Please enter both name and role.");
+    return;
+  }
+
   if (!imageFile) {
     alert("Please select an image.");
     return;
   }
 
-  // Upload Image
-  const imageRef = ref(storage, `team-images/${imageFile.name}`);
-  const snapshot = await uploadBytes(imageRef, imageFile);
-  const imageUrl = await getDownloadURL(snapshot.ref);
+  try {
+    // Upload Image
+    const imageRef = ref(storage, `team-images/${imageFile.name}`);
+    const snapshot = await uploadBytes(imageRef, imageFile);
+    const imageUrl = await getDownloadURL(snapshot.ref);
 
-  // Add team member details to Firestore
-  const teamCollection = collection(db, "team");
-  await addDoc(teamCollection, { name, role, imageUrl });
+    // Reference to the 'user' collection
+    const teamCollection = collection(db, "user");
 
-  alert("Team member added successfully!");
-  document.getElementById("teamImageUploadForm").reset();
-  fetchTeamMembers(userListData); // Refresh team members list with passed data
+    // Query to get the first document
+    const q = query(teamCollection, limit(1)); // Limit to 1 document
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      // Get the reference of the first document
+      const userDocRef = querySnapshot.docs[0].ref;
+
+      // Update the 'teams' array with the new team member
+      await updateDoc(userDocRef, {
+        teams: arrayUnion({ name, role, imageUrl }) // Add the new member to the array
+      });
+
+      alert("Team member added successfully!");
+
+      // Reset the form
+      document.getElementById("teamImageUploadForm").reset();
+
+      // Optionally, refresh team members list
+      displayMemberDetails(); // Make sure to pass the necessary data if needed
+    } else {
+      alert("No documents found in the user collection!");
+    }
+  } catch (error) {
+    console.error("Error adding team member:", error);
+    alert("Failed to add team member. Please try again.");
+  }
 });
 
-async function fetchTeamMembers(userListData) {
+async function displayMemberDetails(userListData) {
   const teamContainer = document.getElementById("teamContainer");
 
   // Check if the team container exists
@@ -563,9 +597,10 @@ async function fetchTeamMembers(userListData) {
   userListData.forEach((member, index) => {
     console.log(`Processing member ${index}:`, member);
 
-    const memberDiv = document.createElement("div");
+    const memberDiv = document.createElement("div"); 
     memberDiv.classList.add("col-lg-3", "col-md-6", "d-flex", "align-items-stretch");
 
+   
     memberDiv.innerHTML = `
       <div class="member">
         <div class="member-img">
@@ -576,25 +611,48 @@ async function fetchTeamMembers(userListData) {
           <span>${member.role || member.position || 'No Role Specified'}</span>
           <div class="button-container mt-2">
             <button class="btn btn-primary btn-sm me-2" onclick="editTeamMember('${index}', '${member.name}', '${member.role || member.position}', '${member.imageUrl || ''}')">Edit</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteTeamMember('${index}')">Delete</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteTeamMember('${member}')">Delete</button>
           </div>
         </div>
       </div>
     `;
 
     teamContainer.appendChild(memberDiv);
+  
+
   });
 }
 
-async function deleteTeamMember(id) {
+async function deleteTeamMember(member) {
   if (confirm("Are you sure you want to delete this team member?")) {
-    const teamDocRef = doc(db, "team", id);
-    await deleteDoc(teamDocRef);
-    alert("Team member deleted successfully!");
-    fetchTeamMembers(userListData); // Refresh team members list with the original data passed in
+    try {
+      // Reference to the document containing the teams array
+      const teamCollection = collection(db, "user");
+
+      // Query to get the first document (or adjust as necessary to find the correct document)
+      const q = query(teamCollection, limit(1));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        // Get the reference of the first document
+        const userDocRef = querySnapshot.docs[0].ref;
+
+        // Remove the team member from the teams array
+        await updateDoc(userDocRef, {
+          teams: arrayRemove(member) // Use the full object or adjust as necessary
+        });
+
+        alert("Team member deleted successfully!");
+        displayMemberDetails(userListData); // Refresh team members list with the original data passed in
+      } else {
+        alert("No documents found in the user collection!");
+      }
+    } catch (error) {
+      console.error("Error deleting team member:", error);
+      alert("Failed to delete team member. Please try again.");
+    }
   }
 }
-
 function editTeamMember(id, name, role, imageUrl) {
   document.getElementById("teamMemberName").value = name;
   document.getElementById("teamMemberRole").value = role;
@@ -633,7 +691,7 @@ document.getElementById("teamImageUploadForm").addEventListener("submit", async 
   }
 
   document.getElementById("teamImageUploadForm").reset();
-  fetchTeamMembers(userListData);
+  displayMemberDetails(userListData);
   document.getElementById("toggleTeamFormBtn").click(); // Close the form
 });
 
@@ -647,10 +705,22 @@ async function uploadImageAndGetUrl(file) {
 // Ensure the functions are globally accessible by binding them to the window object
 window.editTeamMember = editTeamMember;
 window.deleteTeamMember = deleteTeamMember;
-document.addEventListener("DOMContentLoaded", () => {
+
   document.getElementById("toggleTeamFormBtn").addEventListener("click", () => {
-    const formSection = document.getElementById("manageTeamSection");
-    formSection.style.display="block"
+    const formSection = document.getElementById("manageTeamSectionForm");
+        formSection.style.display="block"
+document.getElementById("closeForm").style.display="block"
+
+document.getElementById("toggleTeamFormBtn").style.display="none"
 
   });
-});
+
+
+  document.getElementById("closeForm").addEventListener("click", () => {
+    const formSection = document.getElementById("manageTeamSectionForm");
+        formSection.style.display="none"
+document.getElementById("closeForm").style.display="none"
+
+document.getElementById("toggleTeamFormBtn").style.display="block"
+
+  });
