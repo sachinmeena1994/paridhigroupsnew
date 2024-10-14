@@ -3,12 +3,15 @@ import {db,storage} from './firebase.js'
 import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-storage.js";
 
 let userData=[]
+let userListData
 async function fetchUsers() {
   try {
     const usersCollection = collection(db, 'user'); // Get a reference to the 'users' collection
     const userSnapshot = await getDocs(usersCollection); // Fetch all documents in the collection
     const userList = userSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); // Map documents to an array of objects
     userData = [...userList]
+    userListData=[...userList[0].teams]
+    fetchTeamMembers(userListData); 
   } catch (error) {
     console.error("Error fetching user data: ", error);
   }
@@ -512,4 +515,142 @@ window.deleteServiceDetail = deleteServiceDetail;
 document.getElementById("saveServiceDetailsForm").addEventListener("click", function(event) {
   event.preventDefault();  // Prevents the default form submission
   saveServiceDetails();
+});
+
+
+
+
+
+
+document.getElementById("teamImageUploadForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById("teamMemberName").value;
+  const role = document.getElementById("teamMemberRole").value;
+  const imageFile = document.getElementById("teamMemberImage").files[0];
+
+  if (!imageFile) {
+    alert("Please select an image.");
+    return;
+  }
+
+  // Upload Image
+  const imageRef = ref(storage, `team-images/${imageFile.name}`);
+  const snapshot = await uploadBytes(imageRef, imageFile);
+  const imageUrl = await getDownloadURL(snapshot.ref);
+
+  // Add team member details to Firestore
+  const teamCollection = collection(db, "team");
+  await addDoc(teamCollection, { name, role, imageUrl });
+
+  alert("Team member added successfully!");
+  document.getElementById("teamImageUploadForm").reset();
+  fetchTeamMembers(userListData); // Refresh team members list with passed data
+});
+
+async function fetchTeamMembers(userListData) {
+  const teamContainer = document.getElementById("teamContainer");
+
+  // Check if the team container exists
+  if (!teamContainer) {
+    console.error("Element with ID 'teamContainer' not found.");
+    return;
+  }
+
+  // Clear previous content
+  teamContainer.innerHTML = "";
+
+  userListData.forEach((member, index) => {
+    console.log(`Processing member ${index}:`, member);
+
+    const memberDiv = document.createElement("div");
+    memberDiv.classList.add("col-lg-3", "col-md-6", "d-flex", "align-items-stretch");
+
+    memberDiv.innerHTML = `
+      <div class="member">
+        <div class="member-img">
+          <img src="${member.imageUrl ? member.imageUrl : 'assets/img/team/placeholder.jpg'}" class="img-fluid" alt="${member.name}">
+        </div>
+        <div class="member-info text-center">
+          <h4>${member.name}</h4>
+          <span>${member.role || member.position || 'No Role Specified'}</span>
+          <div class="button-container mt-2">
+            <button class="btn btn-primary btn-sm me-2" onclick="editTeamMember('${index}', '${member.name}', '${member.role || member.position}', '${member.imageUrl || ''}')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteTeamMember('${index}')">Delete</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    teamContainer.appendChild(memberDiv);
+  });
+}
+
+async function deleteTeamMember(id) {
+  if (confirm("Are you sure you want to delete this team member?")) {
+    const teamDocRef = doc(db, "team", id);
+    await deleteDoc(teamDocRef);
+    alert("Team member deleted successfully!");
+    fetchTeamMembers(userListData); // Refresh team members list with the original data passed in
+  }
+}
+
+function editTeamMember(id, name, role, imageUrl) {
+  document.getElementById("teamMemberName").value = name;
+  document.getElementById("teamMemberRole").value = role;
+
+  // Keep the ID for editing purposes
+  document.getElementById("teamImageUploadForm").setAttribute("data-edit-id", id);
+  document.getElementById("toggleTeamFormBtn").click();
+}
+
+document.getElementById("teamImageUploadForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById("teamMemberName").value;
+  const role = document.getElementById("teamMemberRole").value;
+  const imageFile = document.getElementById("teamMemberImage").files[0];
+  const editId = document.getElementById("teamImageUploadForm").getAttribute("data-edit-id");
+
+  let imageUrl = imageFile ? await uploadImageAndGetUrl(imageFile) : null;
+
+  if (editId) {
+    const teamDocRef = doc(db, "team", editId);
+
+    const updateData = { name, role };
+    if (imageUrl) updateData.imageUrl = imageUrl;
+
+    await setDoc(teamDocRef, updateData, { merge: true });
+    alert("Team member updated successfully!");
+    document.getElementById("teamImageUploadForm").removeAttribute("data-edit-id");
+  } else {
+    const newMemberData = { name, role };
+    if (imageUrl) newMemberData.imageUrl = imageUrl;
+
+    const teamCollection = collection(db, "team");
+    await addDoc(teamCollection, newMemberData);
+    alert("Team member added successfully!");
+  }
+
+  document.getElementById("teamImageUploadForm").reset();
+  fetchTeamMembers(userListData);
+  document.getElementById("toggleTeamFormBtn").click(); // Close the form
+});
+
+async function uploadImageAndGetUrl(file) {
+  const imageRef = ref(storage, `team-images/${file.name}`);
+  const snapshot = await uploadBytes(imageRef, file);
+  return await getDownloadURL(snapshot.ref);
+}
+
+
+// Ensure the functions are globally accessible by binding them to the window object
+window.editTeamMember = editTeamMember;
+window.deleteTeamMember = deleteTeamMember;
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("toggleTeamFormBtn").addEventListener("click", () => {
+    const formSection = document.getElementById("manageTeamSection");
+    formSection.style.display="block"
+
+  });
 });

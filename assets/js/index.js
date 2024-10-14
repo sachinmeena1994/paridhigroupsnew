@@ -105,6 +105,49 @@ fetchProperties()
   fetchUEstablishment()
 
 
-
-
+  let userData=[]
+  async function fetchUsers() {
+    try {
+      const usersCollection = collection(db, 'user'); // Get a reference to the 'users' collection
+      const userSnapshot = await getDocs(usersCollection); // Fetch all documents in the collection
+      const userList = userSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); // Map documents to an array of objects
+      userData = [...userList[0].teams]
+      displayTeamMembers(userData);
+    } catch (error) {
+      console.error("Error fetching user data: ", error);
+    }
+  }
+  fetchUsers()
   
+
+// Function to display team members
+function displayTeamMembers(userList) {
+  const teamContainer = document.getElementById('teamContainer'); // Assuming you have a div with this ID
+
+  teamContainer.innerHTML = ''; // Clear existing content if any
+  
+  userList.forEach((user, index) => {
+    // Create a div for the team member
+    const memberDiv = document.createElement('div');
+    memberDiv.classList.add('col-lg-3', 'col-md-6', 'd-flex', 'align-items-stretch');
+
+    // Inner HTML structure
+    memberDiv.innerHTML = `
+      <div class="member" data-aos="fade-up" data-aos-delay="${100 * (index + 1)}">
+        <div class="member-img">
+          <img src="assets/img/team/placeholder.jpg" class="img-fluid" alt="${user.name}"> <!-- Placeholder Image -->
+        </div>
+        <div class="member-info">
+          <h4>${user.name}</h4>
+          <span>${user.position}</span>
+        </div>
+      </div>
+    `;
+
+    // Append the member div to the team container
+    teamContainer.appendChild(memberDiv);
+  });
+}
+
+
+

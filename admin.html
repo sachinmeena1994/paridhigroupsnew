@@ -102,7 +102,7 @@
   
       
        <!-- Manage Property Section (Hidden Initially) -->
-       <div id="managePropertySection" class="content-section hidden">
+       <div id="managePropertySection" class="content-section hidden " >
         <!-- Heading -->
         <div class="section-header">
           <h4>Manage Property</h4>
@@ -183,43 +183,56 @@
   
         <!-- Manage Team Section (Hidden Initially) -->
         <div id="manageTeamSection" class="content-section hidden">
-          <h4 class="mt-5 mb-3">Upload Team Image</h4>
-          <form id="teamImageUploadForm" >
-            <div class="mb-3">
-              <label for="teamMemberName" class="form-label">Team Member Name</label>
-              <input
-                type="text"
-                class="form-control"
-                id="teamMemberName"
-                name="name"
-                placeholder="Enter team member name"
-                required
-              />
-            </div>
-            <div class="mb-3">
-              <label for="teamMemberRole" class="form-label">Role</label>
-              <input
-                type="text"
-                class="form-control"
-                id="teamMemberRole"
-                name="role"
-                placeholder="Enter role"
-                required
-              />
-            </div>
-            <div class="mb-3">
-              <label for="teamMemberImage" class="form-label">Team Member Image</label>
-              <input
-                type="file"
-                class="form-control"
-                id="teamMemberImage"
-                name="image"
-                accept="image/*"
-                required
-              />
-            </div>
-            <button type="submit" class="btn btn-success">Upload Team Image</button>
-          </form>
+       <!-- Button to toggle the team form -->
+<button id="toggleTeamFormBtn" class="btn btn-primary mt-4">Add Team Member</button>
+
+<!-- Collapsible Team Form -->
+<div id="manageTeamSection" class="content-section " style="display: none;">
+  <h4 class="mt-5 mb-3">Upload Team Image</h4>
+  <form id="teamImageUploadForm">
+    <div class="mb-3">
+      <label for="teamMemberName" class="form-label">Team Member Name</label>
+      <input
+        type="text"
+        class="form-control"
+        id="teamMemberName"
+        name="name"
+        placeholder="Enter team member name"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label for="teamMemberRole" class="form-label">Role</label>
+      <input
+        type="text"
+        class="form-control"
+        id="teamMemberRole"
+        name="role"
+        placeholder="Enter role"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label for="teamMemberImage" class="form-label">Team Member Image</label>
+      <input
+        type="file"
+        class="form-control"
+        id="teamMemberImage"
+        name="image"
+        accept="image/*"
+        required
+      />
+    </div>
+    <button type="submit" class="btn btn-success">Upload Team Image</button>
+  </form>
+</div>
+
+<!-- Display Current Team Members -->
+<div id="currentTeam" class="mt-5">
+  <h4>Our Team</h4>
+  <div class="row" id="teamContainer"></div>
+</div>
+
         </div>
       </div>
     </div>
