@@ -33,12 +33,41 @@
         background: rgba(0, 0, 0, 0.8);
         
     }
+
+
+
+
+
+    .loader {    
+        display: none;
+        --r1: 154%;
+        --r2: 68.5%;
+        width: 30px;
+        margin-left: 1vw;
+        aspect-ratio: 1;
+        border-radius: 50%; 
+        background:
+          radial-gradient(var(--r1) var(--r2) at top   ,#0000 79.5%,#269af2 80%),
+          radial-gradient(var(--r1) var(--r2) at bottom,#269af2 79.5%,#0000 80%),
+          radial-gradient(var(--r1) var(--r2) at top   ,#0000 79.5%,#269af2 80%),
+          #ccc;
+        background-size: 50.5% 220%;
+        background-position: -100% 0%,0% 0%,100% 0%;
+        background-repeat:no-repeat;
+        animation: l9 2s infinite linear;
+      }
+      @keyframes l9 {
+          33%  {background-position:    0% 33% ,100% 33% ,200% 33% }
+          66%  {background-position: -100%  66%,0%   66% ,100% 66% }
+          100% {background-position:    0% 100%,100% 100%,200% 100%}
+      }
     
     </style>
    
 
   </head>
   <body>
+
 
 
 <div id="header-container"></div>
@@ -97,6 +126,10 @@
   
     <!-- Main Content -->
     <div class="main-content">
+    
+    
+    
+
       <div id="dashboardSection">
         <!-- Manage Services Section (Hidden Initially) -->
         <div id="manageServicesSection" class="content-section hidden">
@@ -170,8 +203,8 @@
                 Upload Property
               </button>
               <!-- Loading indicator (hidden initially) -->
-              <div id="loadingIndicator" class="spinner-border text-primary" role="status" style="display: none;">
-                <span class="visually-hidden">Uploading...</span>
+              <div id="loadingIndicator" class="loader" style="display: none;">
+   
               </div>
             </div>
           </form>
@@ -231,7 +264,10 @@
         required
       />
     </div>
+   <div style="display: flex;">
     <button type="submit" class="btn btn-success">Save</button>
+    <div class="loader" id="displayLoading" ></div> 
+   </div>
   </form>
 </div>
 
@@ -251,6 +287,13 @@
   
 </div>
 <div id="footer-container"></div>
+
+
+
+
+
+
+
 
     <!-- Dashboard Section (Initially Hidden) -->
     <script>
@@ -296,6 +339,8 @@
       </div>
       <button type="submit" class="btn btn-primary" id="saveServiceDetailsForm">Save</button>
       <button type="button" class="btn btn-secondary" onclick="document.getElementById('serviceModal').style.display='none'">Cancel</button>
+<span class="loader" id="loading" style="display: none;"></span>
+      
     </form>
   </div>
 </div>
