@@ -814,6 +814,7 @@ document
 window.editTeamMember = editTeamMember;
 window.deleteTeamMember = deleteTeamMember;
 
+
 document.getElementById("toggleTeamFormBtn").addEventListener("click", () => {
   const formSection = document.getElementById("manageTeamSectionForm");
   formSection.style.display = "block";
