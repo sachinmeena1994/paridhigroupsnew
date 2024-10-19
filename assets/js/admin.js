@@ -19,6 +19,18 @@ async function fetchUsers() {
   }
 }
 
+function generateUUID() {
+  // Generate a random UUID
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0; // Generate a random number from 0 to 15
+      const v = c === 'x' ? r : (r & 0x3 | 0x8); // Ensure the correct format for the 'y' part
+      return v.toString(16); // Convert the random number to hexadecimal
+  });
+}
+
+// Example usage
+
+
 
 fetchUsers();
 
@@ -532,6 +544,7 @@ document.getElementById("teamImageUploadForm").addEventListener("submit", async 
   const name = document.getElementById("teamMemberName").value;
   const role = document.getElementById("teamMemberRole").value;
   const imageFile = document.getElementById("teamMemberImage").files[0];
+  const editId = document.getElementById("teamImageUploadForm").getAttribute("data-edit-id");
 
   // Validate input
   if (!name || !role) {
@@ -539,48 +552,92 @@ document.getElementById("teamImageUploadForm").addEventListener("submit", async 
     return;
   }
 
-  if (!imageFile) {
+  if (!imageFile && !editId) { // Only require image if adding a new team member
     alert("Please select an image.");
     return;
   }
 
-  try {
-    // Upload Image
-    const imageRef = ref(storage, `team-images/${imageFile.name}`);
-    const snapshot = await uploadBytes(imageRef, imageFile);
-    const imageUrl = await getDownloadURL(snapshot.ref);
+  let imageUrl = imageFile ? await uploadImageAndGetUrl(imageFile) : null;
+  const updatedUserArray = [...userData];
 
-    // Reference to the 'user' collection
-    const teamCollection = collection(db, "user");
+  if (editId) {
+    // EDIT: Update existing team member
+    updatedUserArray[0].teams = updatedUserArray[0].teams.map(teamMember => {
+      if (teamMember.id == editId) {
+        return {
+          ...teamMember,
+          name: name,
+          role: role,
+          imageUrl: imageUrl || teamMember.imageUrl, // Use existing image if not changed
+        };
+      }
+      return teamMember;
+    });
 
-    // Query to get the first document
-    const q = query(teamCollection, limit(1)); // Limit to 1 document
-    const querySnapshot = await getDocs(q);
+    try {
+      // Update team member in Firestore
+      const teamCollection = collection(db, "user");
+      const q = query(teamCollection, limit(1));
+      const querySnapshot = await getDocs(q);
 
-    if (!querySnapshot.empty) {
-      // Get the reference of the first document
-      const userDocRef = querySnapshot.docs[0].ref;
+      if (!querySnapshot.empty) {
+        const userDocRef = querySnapshot.docs[0].ref;
 
-      // Update the 'teams' array with the new team member
-      await updateDoc(userDocRef, {
-        teams: arrayUnion({ name, role, imageUrl }) // Add the new member to the array
-      });
+        // Update teams array in Firestore
+        await setDoc(userDocRef, { teams: updatedUserArray[0].teams }, { merge: true });
 
-      alert("Team member added successfully!");
-
-      // Reset the form
-      document.getElementById("teamImageUploadForm").reset();
-
-      // Optionally, refresh team members list
-      displayMemberDetails(); // Make sure to pass the necessary data if needed
-    } else {
-      alert("No documents found in the user collection!");
+        // alert("Team member updated successfully!");
+        window.location.reload();
+        document.getElementById("teamImageUploadForm").removeAttribute("data-edit-id");
+      } else {
+        alert("No user found to update!");
+      }
+    } catch (error) {
+      console.error("Error updating team member:", error);
+      alert("Failed to update team member. Please try again.");
     }
-  } catch (error) {
-    console.error("Error adding team member:", error);
-    alert("Failed to add team member. Please try again.");
+  } else {
+    // ADD: Add new team member
+    try {
+      // Upload image if file is selected
+      const id = generateUUID(); // Generate unique ID for new team member
+
+      if (imageFile) {
+        const imageRef = ref(storage, `team-images/${imageFile.name}`);
+        const snapshot = await uploadBytes(imageRef, imageFile);
+        imageUrl = await getDownloadURL(snapshot.ref);
+      }
+
+      // Prepare new team member data
+      const newMemberData = { id, name, role, imageUrl };
+
+      // Add new team member to Firestore
+      const teamCollection = collection(db, "user");
+      const q = query(teamCollection, limit(1)); // Limit to 1 document
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const userDocRef = querySnapshot.docs[0].ref;
+
+        // Add new member to the teams array in Firestore
+        await updateDoc(userDocRef, {
+          teams: arrayUnion(newMemberData) // Append the new member
+        });
+
+        // alert("Team member added successfully!");
+        window.location.reload();
+        document.getElementById("teamImageUploadForm").reset(); // Reset form
+        displayMemberDetails(); // Refresh the team members list if needed
+      } else {
+        alert("No documents found in the user collection!");
+      }
+    } catch (error) {
+      console.error("Error adding team member:", error);
+      alert("Failed to add team member. Please try again.");
+    }
   }
 });
+
 
 async function displayMemberDetails(userListData) {
   const teamContainer = document.getElementById("teamContainer");
@@ -611,7 +668,7 @@ async function displayMemberDetails(userListData) {
           <span>${member.role || member.position || 'No Role Specified'}</span>
           <div class="button-container mt-2">
             <button class="btn btn-primary btn-sm me-2" onclick="editTeamMember('${member.id}', '${member.name}', '${member.role || member.position}', '${member.imageUrl || ''}')">Edit</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteTeamMember('${member}')">Delete</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteTeamMember('${member.id}')">Delete</button>
           </div>
         </div>
       </div>
@@ -623,13 +680,52 @@ async function displayMemberDetails(userListData) {
   });
 }
 
-async function deleteTeamMember(member) {
+// async function deleteTeamMember(member) {
+//   if (confirm("Are you sure you want to delete this team member?")) {
+//     try {
+//       // Reference to the document containing the teams array
+//       const teamCollection = collection(db, "user");
+//       let updatedUserData = [...userData]
+//       updatedUserData[0].teams.forEach((element , index) => {
+//         if(element.id === parseInt(member) ){
+//           updatedUserData[0].teams.splice(index,1)
+//       }})
+
+//       // Query to get the first document (or adjust as necessary to find the correct document)
+//       const q = query(teamCollection, limit(1));
+//       const querySnapshot = await getDocs(q);
+
+//       if (!querySnapshot.empty) {
+//         // Get the reference of the first document
+//         const userDocRef = querySnapshot.docs[0].ref;
+
+//         // Remove the team member from the teams array
+//         await updateDoc(userDocRef, {
+//           updatedUserData // Use the full object or adjust as necessary
+//         });
+
+//         alert("Team member deleted successfully!");
+//         displayMemberDetails(userListData); // Refresh team members list with the original data passed in
+//       } else {
+//         alert("No documents found in the user collection!");
+//       }
+//     } catch (error) {
+//       console.error("Error deleting team member:", error);
+//       alert("Failed to delete team member. Please try again.");
+//     }
+//   }
+// }
+async function deleteTeamMember(memberId) {
   if (confirm("Are you sure you want to delete this team member?")) {
     try {
-      // Reference to the document containing the teams array
-      const teamCollection = collection(db, "user");
+      // Clone the current user data to avoid mutating the original array
+      const updatedUserData = { ...userData[0] };
+      
+      // Remove the specified team member from the teams array
+      updatedUserData.teams = updatedUserData.teams.filter(teamMember => teamMember.id != memberId);
 
-      // Query to get the first document (or adjust as necessary to find the correct document)
+      // Reference to the 'user' collection and query for the first document
+      const teamCollection = collection(db, "user");
       const q = query(teamCollection, limit(1));
       const querySnapshot = await getDocs(q);
 
@@ -637,13 +733,14 @@ async function deleteTeamMember(member) {
         // Get the reference of the first document
         const userDocRef = querySnapshot.docs[0].ref;
 
-        // Remove the team member from the teams array
-        await updateDoc(userDocRef, {
-          teams: arrayRemove(member) // Use the full object or adjust as necessary
-        });
+        // Update the entire document with the updatedUserData object
+        await setDoc(userDocRef, updatedUserData, { merge: true });
 
-        alert("Team member deleted successfully!");
-        displayMemberDetails(userListData); // Refresh team members list with the original data passed in
+        // alert("Team member deleted successfully!");
+        window.location.reload();
+
+        // Refresh the team member display
+        // displayMemberDetails(updatedUserData.teams);
       } else {
         alert("No documents found in the user collection!");
       }
@@ -653,6 +750,7 @@ async function deleteTeamMember(member) {
     }
   }
 }
+
 function editTeamMember(id, name, role, imageUrl) {
   document.getElementById("teamMemberName").value = name;
   document.getElementById("teamMemberRole").value = role;
@@ -662,38 +760,25 @@ function editTeamMember(id, name, role, imageUrl) {
   document.getElementById("toggleTeamFormBtn").click();
 }
 
-document.getElementById("teamImageUploadForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
+// document.getElementById("teamImageUploadForm").addEventListener("submit", async (e) => {
+  
+//   } else {
+//     // Add a new team member
+//     const newMemberData = { name, role };
+//     if (imageUrl) newMemberData.imageUrl = imageUrl;
 
-  const name = document.getElementById("teamMemberName").value;
-  const role = document.getElementById("teamMemberRole").value;
-  const imageFile = document.getElementById("teamMemberImage").files[0];
-  const editId = document.getElementById("teamImageUploadForm").getAttribute("data-edit-id");
+//     const teamCollection = collection(db, "team");
+//     await addDoc(teamCollection, newMemberData);
 
-  let imageUrl = imageFile ? await uploadImageAndGetUrl(imageFile) : null;
+//     alert("Team member added successfully!");
+//   }
 
-  if (editId) {
-    const teamDocRef = doc(db, "team", editId);
+//   // Reset the form and update UI
+//   document.getElementById("teamImageUploadForm").reset();
+//   displayMemberDetails(userListData); // Assuming this displays updated data
+//   document.getElementById("toggleTeamFormBtn").click(); // Close the form
+// });
 
-    const updateData = { name, role };
-    if (imageUrl) updateData.imageUrl = imageUrl;
-
-    await setDoc(teamDocRef, updateData, { merge: true });
-    alert("Team member updated successfully!");
-    document.getElementById("teamImageUploadForm").removeAttribute("data-edit-id");
-  } else {
-    const newMemberData = { name, role };
-    if (imageUrl) newMemberData.imageUrl = imageUrl;
-
-    const teamCollection = collection(db, "team");
-    await addDoc(teamCollection, newMemberData);
-    alert("Team member added successfully!");
-  }
-
-  document.getElementById("teamImageUploadForm").reset();
-  displayMemberDetails(userListData);
-  document.getElementById("toggleTeamFormBtn").click(); // Close the form
-});
 
 async function uploadImageAndGetUrl(file) {
   const imageRef = ref(storage, `team-images/${file.name}`);
