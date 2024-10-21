@@ -70,58 +70,65 @@ async function fetchProperties() {
       ...doc.data(),
     }));
 
-    const propertyListContainer = document.getElementById("propertyList");
-    propertyListContainer.innerHTML = "";
-    properList.forEach((property) => {
-      const propertyCard = document.createElement("div");
-      propertyCard.classList.add("property-card");
+displayPropertiesDetails(properList)
+     
 
-      propertyCard.innerHTML = `
-        <div class="property-card-header" style="background-color: #343a40;">
-          <span>${property.partner}</span>
-          <i class="fas fa-chevron-down"></i>
-        </div>
-        <div class="property-card-body">
-          <img src="${property.images[0]}" alt="${property.partner}" class="img-fluid mb-2" style="max-width: 150px; height: auto;">
-          <p>${property.description}</p>
-          <button class="btn btn-primary custom-btn edit-btn" data-id="${property.id}">
-            Edit <i class="fas fa-arrow-down"></i>
-          </button>
-          <button class="btn btn-danger custom-btn delete-btn" data-id="${property.id}">
-            Delete <i class="fas fa-trash-alt"></i>
-          </button>
-        </div>
-      `;
-
-      // Event listener to toggle the card open/close
-      propertyCard
-        .querySelector(".property-card-header")
-        .addEventListener("click", function () {
-          propertyCard.classList.toggle("open");
-        });
-
-      // Event listener for the Edit button
-      propertyCard
-        .querySelector(".edit-btn")
-        .addEventListener("click", function () {
-          loadPropertyData(property);
-        });
-
-      // Event listener for the Delete button
-      propertyCard
-        .querySelector(".delete-btn")
-        .addEventListener("click", function () {
-          deleteProperty(property.id);
-        });
-
-      propertyListContainer.appendChild(propertyCard);
-    });
   } catch (error) {
     console.log(error);
   }
 }
 
 fetchProperties();
+
+
+ const displayPropertiesDetails=(properList) =>{
+  const propertyListContainer = document.getElementById("propertyList");
+  propertyListContainer.innerHTML = "";
+  properList.forEach((property) => {
+    const propertyCard = document.createElement("div");
+    propertyCard.classList.add("property-card");
+    
+    propertyCard.innerHTML = `
+      <div class="property-card-header" style="background-color: #343a40;">
+        <span>${property.partner}</span>
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <div class="property-card-body">
+        <img src="${property.images[0]}" alt="${property.partner}" class="img-fluid mb-2" style="max-width: 150px; height: auto;">
+        <p>${property.description}</p>
+        <button class="btn btn-primary custom-btn edit-btn" data-id="${property.id}">
+          Edit <i class="fas fa-arrow-down"></i>
+        </button>
+        <button class="btn btn-danger custom-btn delete-btn" data-id="${property.id}">
+          Delete <i class="fas fa-trash-alt"></i>
+        </button>
+      </div>
+    `;
+
+    // Event listener to toggle the card open/close
+    propertyCard
+      .querySelector(".property-card-header")
+      .addEventListener("click", function () {
+        propertyCard.classList.toggle("open");
+      });
+
+    // Event listener for the Edit button
+    propertyCard
+      .querySelector(".edit-btn")
+      .addEventListener("click", function () {
+        loadPropertyData(property);
+      });
+
+    // Event listener for the Delete button
+    propertyCard
+      .querySelector(".delete-btn")
+      .addEventListener("click", function () {
+        deleteProperty(property.id);
+      });
+
+    propertyListContainer.appendChild(propertyCard);
+  });
+ }
 
 function loadPropertyData(property) {
   const propertyForm = document.getElementById("propertyForm");
@@ -239,10 +246,10 @@ document
 
     const propertyForm = document.getElementById("propertyForm");
     const propertyId = propertyForm.getAttribute("data-id");
-
+    document.getElementById("loadingIndicator").style.display =
+    "inline-block";
     if (propertyId) {
-      document.getElementById("loadingIndicator").style.display =
-        "inline-block";
+      
       // Update property if ID is present
       const result = await updateProperty(
         propertyId,
@@ -250,7 +257,15 @@ document
         propertyImages
       );
       if (result.success) {
+        fetchProperties();
         alert("Property updated successfully!");
+          // Clear the form after success
+    // propertyForm.reset();
+    propertyForm.removeAttribute("data-id");
+    document.getElementById("addPropertyBtn").textContent = "Add New Property";
+    propertyForm.classList.add("hidden");
+    document.getElementById("loadingIndicator").style.display = "none";
+      
       } else {
         alert("Error updating property: " + result.message);
       }
@@ -258,19 +273,22 @@ document
       // Otherwise, add a new property
       const result = await addProperty(propertyData, propertyImages);
       if (result.success) {
+        fetchProperties();
         alert("Property added successfully!");
+          // Clear the form after success
+    // propertyForm.reset();
+    propertyForm.removeAttribute("data-id");
+    document.getElementById("addPropertyBtn").textContent = "Add New Property";
+    propertyForm.classList.add("hidden");
+    document.getElementById("loadingIndicator").style.display = "none";
+     
+    
       } else {
         alert("Error adding property: " + result.message);
       }
     }
 
-    // Clear the form after success
-    propertyForm.reset();
-    propertyForm.removeAttribute("data-id");
-    document.getElementById("addPropertyBtn").textContent = "Add New Property";
-    propertyForm.classList.add("hidden");
-    document.getElementById("loadingIndicator").style.display = "none";
-    fetchProperties(); // Refresh the property list
+  
   });
 
 async function addProperty(propertyData, files) {

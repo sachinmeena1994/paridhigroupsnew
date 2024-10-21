@@ -14,6 +14,8 @@ async function fetchPropertyById(id) {
             const propertyData = { id: propertySnap.id, ...propertySnap.data() };
             console.log("Property Data:", propertyData);
             displayPropertyDetails(propertyData);
+            
+            
         } else {
             console.log("No such document!");
         }
@@ -47,6 +49,8 @@ function displayPropertyDetails(data) {
             clickable: true
         }
     });
+    document.getElementById("preloader").style.display="none"
+   
 }
 
 // Fetch the data for the specific ID

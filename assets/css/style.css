@@ -1657,3 +1657,13 @@ section {
   display: block;
   margin: 0 auto; /* Centers the image within the slide */
 }
+
+
+.icon-box-link{
+  color: rgb(46 158 255);
+}
+
+.icon-box-link:hover{
+  color: #ffd584 ;
+
+}

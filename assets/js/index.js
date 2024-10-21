@@ -135,11 +135,11 @@ function displayTeamMembers(userList) {
     memberDiv.innerHTML = `
       <div class="member" data-aos="fade-up" data-aos-delay="${100 * (index + 1)}">
         <div class="member-img">
-          <img src="assets/img/team/placeholder.jpg" class="img-fluid" alt="${user.name}"> <!-- Placeholder Image -->
+          <img src="${user.imageUrl}" class="img-fluid" alt="${user.name}"> <!-- Placeholder Image -->
         </div>
         <div class="member-info">
           <h4>${user.name}</h4>
-          <span>${user.position}</span>
+          <span>${user.role}</span>
         </div>
       </div>
     `;
