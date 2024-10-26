@@ -703,6 +703,23 @@ section {
   transform: translateY(-10px);
 }
 
+/* Add this to your CSS file */
+.row {
+  display: flex;
+  justify-content: center;
+}
+
+.icon-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.icon-box h4 {
+  margin-top: 10px; /* Adjust margin for spacing */
+}
+
 /*--------------------------------------------------------------
 # Cta
 --------------------------------------------------------------*/
@@ -1420,6 +1437,119 @@ section {
     display: inline-block;
   }
 }
+
+/* Form css for services "Rent a Property */
+
+/* Modal container */
+/* Modal container */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.6); /* Black background with opacity */
+}
+
+/* Modal content */
+.modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 12px; /* Rounded corners */
+  width: 90%;
+  max-width: 450px; /* Set max width for responsiveness */
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  text-align: center;
+  animation: modalFadeIn 0.5s ease-in-out; /* Animation for modal appearance */
+}
+
+/* Fade-in animation for modal */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Close button */
+/* .close {
+  color: #333;
+  float: right;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s;
+} */
+
+/* .close:hover,
+.close:focus {
+  color: #ff5c5c;
+  text-decoration: none;
+  cursor: pointer;
+} */
+
+/* Form styles */
+.modal-content h2 {
+  font-family: 'Arial', sans-serif;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.modal-content label {
+  display: block;
+  text-align: left;
+  font-family: 'Arial', sans-serif;
+  font-size: 1rem;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="email"],
+.modal-content input[type="tel"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: 'Arial', sans-serif;
+  box-sizing: border-box;
+}
+
+.modal-content input[type="submit"] {
+  background-color: #4CAF50; /* Green background */
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.modal-content input[type="submit"]:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
+
+/* Make the modal responsive */
+@media screen and (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    margin: 5% auto;
+  }
+}
+
+
 
 /*--------------------------------------------------------------
 # Footer
