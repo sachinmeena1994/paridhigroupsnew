@@ -195,6 +195,17 @@
               </div>
             </a>
           </div>
+
+          <div class="row">
+            <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0 icon-box-link" data-aos="zoom-in" data-aos-delay="100" id = "rentProperty">
+              <!-- <a href="services.html?id=6" class="icon-box-link"> -->
+                <div class="icon-box">
+                  <div class="icon"><i class="bi bi-houses-fill"></i></div>
+                  <h4>Rent A Property</h4>
+                  <p id="service7"></p>
+                </div>
+              </a>
+            </div>
     
           <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0 icon-box-link" data-aos="zoom-in" data-aos-delay="200" >
             <!-- <a href="services.html?id=1" class="icon-box-link"> -->
@@ -457,10 +468,10 @@
             <form action="https://formspree.io/f/meqyeppg" method="POST" onsubmit="clearForm()">
               <div class="row g-3">
                   <div class="col-xl-12">
-                      <input type="text" class="form-control bg-light border-0" placeholder="Your Name" style="height: 55px;" id="name" name="name">
+                      <input type="text" class="form-control bg-light border-0" placeholder="Your Name" style="height: 55px;" id="name" name="name" required>
                   </div>
                   <div class="col-12">
-                      <input type="email" class="form-control bg-light border-0" placeholder="Your Email" style="height: 55px;" id="email" name="email">
+                      <input type="email" class="form-control bg-light border-0" placeholder="Your Email" style="height: 55px;" id="email" name="email" required>
                   </div>
                   <div class="col-12">
                       <select class="form-select bg-light border-0" style="height: 55px;" id="service" name="service">
@@ -479,14 +490,46 @@
                   </div>
               </div>
           </form>
-          
-         
-          
-
+ 
           </div>
-
         </div>
       </div>
+
+<!-- modal form structure -->
+
+      <!-- Modal Structure -->
+<!-- Modal Structure -->
+<div id="rentModal" class="modal">
+  <div class="modal-content">
+    <!-- <span class="close">&times;</span> -->
+    <h2>Rent Property Form</h2>
+    <form id="rentForm">
+      <label for="name">Full Name:</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="phone">Phone Number:</label>
+      <input type="tel" id="phone" name="phone" required>
+
+      <label for="property">Property Name:</label>
+      <input type="text" id="property" name="property" required>
+
+      <!-- <input type="submit" value="Submit"> -->
+      <div style="
+    display: flex;
+    justify-content: space-between;
+    /* flex-direction: column; */
+"><button type="button" class="btn btn-success" id = "SendEnquire" style="display: flex;">Send</button><button type="button" class="btn btn-light close" style="
+    /* display: flex; */
+    align-items: flex-end;
+">cancel</button></div>
+    </form>
+  </div>
+</div>
+
+
     </section><!-- End Contact Section -->
 
   </main><!-- End #main -->
@@ -567,6 +610,43 @@
 
   }
 </script>
+
+<script>
+  // Get the modal
+const modal = document.getElementById("rentModal");
+
+// Get the button that opens the modal
+const btn = document.getElementById("rentProperty");
+
+// Get the <span> element that closes the modal
+const span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the modal
+btn.onclick = function() {
+  modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
+// Form submission handling
+document.getElementById("rentForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+  alert("Form Submitted!");
+  modal.style.display = "none"; // Close the modal after submission
+});
+
+</script>
+
 
 
 

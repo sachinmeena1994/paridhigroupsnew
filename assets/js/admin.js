@@ -685,8 +685,8 @@ document
           { merge: true }
         );
 
-        // alert("Team member updated successfully!");
-        window.location.reload();
+        alert("Team member updated successfully!");
+        // window.location.reload();
         document
           .getElementById("teamImageUploadForm")
           .removeAttribute("data-edit-id");
@@ -774,7 +774,7 @@ async function deleteTeamMember(memberId) {
         // Update the entire document with the updatedUserData object
         await setDoc(userDocRef, updatedUserData, { merge: true });
 
-        window.location.reload();
+        // window.location.reload();
       } else {
         alert("No documents found in the user collection!");
       }
@@ -784,6 +784,8 @@ async function deleteTeamMember(memberId) {
     }
   }
 }
+
+
 
 function editTeamMember(id, name, role) {
   document.getElementById("teamMemberName").value = name;

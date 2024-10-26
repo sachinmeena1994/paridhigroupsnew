@@ -94,7 +94,7 @@ async function fetchServices() {
   document.getElementById("service4").innerHTML=serviceList[0].services[3].description
   document.getElementById("service5").innerHTML=serviceList[0].services[4].description
   document.getElementById("service6").innerHTML=serviceList[0].services[5].description
-
+  document.getElementById("service7").innerHTML=serviceList[0].services[6].description
   
   }
   catch (error) {
@@ -149,5 +149,7 @@ function displayTeamMembers(userList) {
   });
 }
 
-
+document.getElementById("rentProperty").addEventListener("click" , (event) => {
+// alert(event)
+})
 
